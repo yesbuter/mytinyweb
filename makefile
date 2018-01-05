@@ -1,5 +1,5 @@
 proc : main.o tiny.o doit.o parse_uri.o serve_static.o serve_dynamic.o clienterror.o
-	cc -o proc tiny.o main.o doit.o parse_uri.o serve_static.o serve_dynamic.o clienterror.o
+	cc -o proc tiny.o main.o doit.o parse_uri.o serve_static.o serve_dynamic.o clienterror.o -pthread
 	
 tiny.o : tiny.c tiny.h
 	cc -c tiny.c

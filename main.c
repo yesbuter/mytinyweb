@@ -2,6 +2,7 @@
 #include<signal.h>
 #include<errno.h>
 #include<sys/wait.h>
+#include<pthread.h>
 
 #define INVALID_SOCKET ~0
 
@@ -22,10 +23,21 @@ void handler(int sig)
     errno = olderrno;
 }
 
+void *thread(void *vargp)
+{
+    printf("tetetstatstatasetasast\n");
+    int connfd = *((int*)vargp);
+    pthread_detach(pthread_self());
+    free(vargp);
+    doit(connfd);
+    close(connfd);
+    return NULL;
+}
 int main(int argc, char**argv){
     socklen_t clientlen;
     struct sockaddr_storage clientaddr;
-    int listenfd, connfd;
+    int listenfd, *connfd;
+    pthread_t do_t;
     char hostname[MAXLINE], portname[MAXLINE];
 
     if(argc!=2){
@@ -46,16 +58,13 @@ int main(int argc, char**argv){
 
     while(1){
         clientlen = sizeof(clientaddr);
-        connfd = accept(listenfd, (SA*)&clientaddr, &clientlen);
-        getnameinfo((SA*)&clientaddr, clientlen, hostname, MAXLINE, portname, MAXLINE, 0);
-        printf("Accept connection from (%s, %s)\n", hostname, portname);
-        doit(connfd);
-        if(connfd != INVALID_SOCKET)
+        connfd = malloc(sizeof(int));
+        *connfd = accept(listenfd, (SA*)&clientaddr, &clientlen);
+        if(*connfd != INVALID_SOCKET)
         {
             getnameinfo((SA*)&clientaddr, clientlen, hostname, MAXLINE, portname, MAXLINE, 0);
             printf("Accept connection from (%s, %s)\n", hostname, portname);
-            doit(connfd);
+            pthread_create(&do_t, NULL, thread, connfd);
         }
-        close(connfd);
     }
 }
