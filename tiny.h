@@ -13,10 +13,10 @@
 #define MAXLINE 8192
 #define RIO_BUFSIZE 8192
 typedef struct{
-	int rio_fd;
-	int rio_cnt;
-	char *rio_bufptr;
-	char rio_buf[RIO_BUFSIZE];
+    int rio_fd;
+    int rio_cnt;
+    char *rio_bufptr;
+    char rio_buf[RIO_BUFSIZE];
 }rio_t;
 extern char **environ;
 typedef struct sockaddr SA;
